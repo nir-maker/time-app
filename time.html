@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית משימות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 15%;
+            padding: 10px;
+            background: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #e6e6e6;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            position: relative;
+        }
+        li span {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>רשימת המשימות שלי</h1>
+        <div>
+            <input type="text" id="taskInput" placeholder="הזן משימה חדשה">
+            <button onclick="addTask()">הוסף</button>
+        </div>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        var tasks = [];
+
+        // טוען את המשימות מ-localStorage בעת טעינת הדף
+        window.onload = function() {
+            if (localStorage.getItem('tasks')) {
+                tasks = JSON.parse(localStorage.getItem('tasks'));
+                tasks.forEach(function(task) {
+                    renderTask(task);
+                });
+            }
+        };
+
+        function addTask() {
+            var taskInput = document.getElementById("taskInput");
+
+            if (taskInput.value.trim() !== "") {
+                var taskText = taskInput.value.trim();
+                tasks.push(taskText);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                renderTask(taskText);
+                taskInput.value = "";
+            }
+        }
+
+        function renderTask(taskText) {
+            var taskList = document.getElementById("taskList");
+            var li = document.createElement("li");
+            var span = document.createElement("span");
+            span.innerHTML = "&#10006;";
+            span.onclick = function() {
+                var li = this.parentElement;
+                var index = Array.from(taskList.children).indexOf(li);
+                tasks.splice(index, 1);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                taskList.removeChild(li);
+            };
+            li.appendChild(document.createTextNode(taskText));
+            li.appendChild(span);
+            taskList.appendChild(li);
+        }
+    </script>
+</body>
+</html>
